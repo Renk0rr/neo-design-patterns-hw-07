@@ -1,12 +1,23 @@
 {
-  "name": "neo-design-patterns-hw-06",
+  "name": "neo-design-patterns-hw-7",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node src/main.ts"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sofiiayarmak/neo-design-patterns-hw-7.git"
+  },
+  "keywords": [],
+  "author": "Sofiia_Yarmak <sophia.yarmak@gmail.com>",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/sofiiayarmak/neo-design-patterns-hw-7/issues"
+  },
+  "homepage": "https://github.com/sofiiayarmak/neo-design-patterns-hw-7#readme",
   "devDependencies": {
     "@types/node": "^25.9.1",
     "ts-node": "^10.9.2",

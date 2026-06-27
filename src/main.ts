@@ -1,14 +1,55 @@
-import { MessageService } from "./MessageService";
-import { createRateLimitProxy } from "./RateLimitProxy";
+import { writeFileSync } from "fs";
+import { RendererFactory, RendererType } from "./factories/RendererFactory";
+import { Section } from "./nodes/Section";
+import { Paragraph } from "./nodes/Paragraph";
+import { List } from "./nodes/List";
 
-const messageService = new MessageService();
-const service = createRateLimitProxy(messageService, 1000);
+function createDocument(format: RendererType): string {
+  const renderer = RendererFactory.create(format);
+  const doc = new Section("Структурні патерни", renderer, [], 1);
 
-console.log("Тестуємо систему анти-спаму:");
+  const patterns = new Section(
+    "Основні патерни",
+    renderer,
+    [
+      new Paragraph("Розглянемо два важливих структурних патерни.", renderer),
+      new Section(
+        "Composite",
+        renderer,
+        [
+          new Paragraph(
+            "Дозволяє створювати деревоподібні структури об'єктів.",
+            renderer,
+          ),
+          new List(
+            ["Спрощує структуру", "Гнучкий код", "Легка підтримка"],
+            renderer,
+          ),
+        ],
+        2,
+      ),
+      new Section(
+        "Bridge",
+        renderer,
+        [
+          new Paragraph("Розділяє абстракцію та реалізацію.", renderer),
+          new List(["Незалежні зміни", "Краща масштабованість"], renderer),
+        ],
+        2,
+      ),
+    ],
+    2,
+  );
 
-service.send("Привіт! Як справи?");
-service.send("Чому не відповідаєш?");
+  doc.add(patterns);
+  return doc.render();
+}
 
-setTimeout(() => {
-  service.send("Це повідомлення вже пройде, бо ми почекали 1 секунду");
-}, 1100);
+const format = (process.argv[2] || "markdown") as RendererType;
+const output = process.argv[3];
+
+const content = createDocument(format);
+const renderer = RendererFactory.create(format);
+const result = renderer.wrapDocument(content);
+
+output ? writeFileSync(output, result) : console.log(result);

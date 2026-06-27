@@ -1,21 +1,41 @@
-# neo-design-patterns-hw-06
+# neo-design-patterns-hw-7
 
-1. Два декоратори методу послідовно змінюють текст повідомлення. `@uppercase` перетворює текст на великі літери. `@withTimestamp` додає часову мітку `[YYYY-MM-DD HH:mm:ss]` на початок.
-2. `RateLimitProxy` обгортає будь-який `IMessageService` і контролює частоту викликів. Якщо `send` викликається раніше, ніж через заданий інтервал після попереднього виклику, повідомлення блокується і виводиться `[RateLimit] skipped`.
-3. Встановлення:
+Було реалізовано систему генерації документів із підтримкою форматів Markdown, HTML та Plain Text.
+Демонструє патерни Composite та Bridge.
 
-```bash
-npm install
-```
+1. Структура проекту:
+   src/
+   ├── interfaces/ # Інтерфейси
+   │ ├── DocNode.ts # Базовий інтерфейс для всіх елементів документа
+   │ └── DocRenderer.ts # Інтерфейс для рендерерів
+   ├── renderers/ # Реалізації рендерерів
+   │ ├── BaseRenderer.ts # Базовий клас для рендерерів
+   │ ├── HTMLRenderer.ts # HTML формат
+   │ ├── MarkdownRenderer.ts # Markdown формат
+   │ └── PlainTextRenderer.ts # Простий текст
+   ├── nodes/ # Елементи документа
+   │ ├── List.ts # Список
+   │ ├── Paragraph.ts # Параграф
+   │ └── Section.ts # Секція (Composite)
+   ├── factories/ # Фабрики
+   │ └── RendererFactory.ts # Фабрика для створення рендерерів
+   └── main.ts # Точка входу
 
-4. Запуск
+2. Встановлення
+   npm install
 
-```bash
-npm start
-```
+3. Запуск
+   npx ts-node src/main.ts markdown
+   npx ts-node src/main.ts html
+   npx ts-node src/main.ts plain
 
-5. Очікуваний результат:
-   Тестуємо систему анти-спаму:
-   [2026-05-23 12:14:43] ПРИВІТ! ЯК СПРАВИ?
-   [RateLimit] skipped
-   [2026-05-23 12:14:44] ЦЕ ПОВІДОМЛЕННЯ ВЖЕ ПРОЙДЕ, БО МИ ПОЧЕКАЛИ 1 СЕКУНДУ
+4. Збереження у файл
+   npx ts-node src/main.ts markdown output.md
+   npx ts-node src/main.ts html output.html
+   npx ts-node src/main.ts plain output.txt
+
+5. Структурні патерни
+   Composite дозволяє створювати деревоподібні структури об'єктів. Composite реалізовано в класі `Section` (`src/nodes/Section.ts`). Клас `Section` реалізує інтерфейс `DocNode` і містить масив дочірніх
+   елементів `DocNode[]`. Це дозволяє будувати документ як дерево довільної глибини. `Section` може містити `Paragraph`, `List` або інші `Section`. Метод `render()` рекурсивно викликає `render()` на кожному дочірньому елементі та об'єднує результати.
+
+Bridge реалізовано через інтерфейс `DocRenderer` (`src/interfaces/DocRenderer.ts`). Кожен елемент документа отримує об'єкт рендерера через конструктор і делегує йому всі рішення про форматування. Структура документа та спосіб його виводу змінюються незалежно одне від одного. Можна додати новий формат, не змінюючи жодного вузла документа, або додати новий тип вузла, не чіпаючи рендерери.
